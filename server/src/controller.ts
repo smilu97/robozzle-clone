@@ -1,5 +1,6 @@
 import * as http from 'http';
 
+import getMaps, { convertMapIntoMeta } from './maps';
 import { addRouteRule } from './router';
 
 interface ControllerRequest {
@@ -7,7 +8,7 @@ interface ControllerRequest {
   body: Buffer,
 }
 
-type Controller = (request: ControllerRequest, response: ControllerResponse) => void;
+type Controller = (request: ControllerRequest, response: ControllerResponse) => Promise<void>;
 
 class ControllerResponse {
   response: http.OutgoingMessage;
@@ -26,21 +27,20 @@ class ControllerResponse {
   }
 }
 
-function handleRoot(request: ControllerRequest, response: ControllerResponse) {
-  response.send('Hello HTTP!');
+async function handleMapList(request: ControllerRequest, response: ControllerResponse) {
+  const content = JSON.stringify((await getMaps()).map(convertMapIntoMeta));
+  response.send(content);
 }
 
 function register(methods: string[], pattern: RegExp, controller: Controller) {
-  addRouteRule(methods, pattern, (request, response) => {
+  addRouteRule(methods, pattern, async (request, response) => {
     const req = {
       req: request.req,
       body: request.body,
     };
     const res = new ControllerResponse(response);
-    controller(req, res);
+    await controller(req, res);
   })
 }
 
-export default function addControllers() {
-  register(['GET'], /\//, handleRoot);
-}
+register(['GET'], /\/maps/, handleMapList);

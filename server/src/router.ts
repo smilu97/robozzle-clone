@@ -1,11 +1,10 @@
 import * as http from 'http';
-
 export interface RouteRequest {
   req: http.IncomingMessage;
   body: Buffer;
 };
 
-export type RouteRuleHandler = (request: RouteRequest, response: http.OutgoingMessage) => void;
+export type RouteRuleHandler = (request: RouteRequest, response: http.OutgoingMessage) => Promise<void>;
 
 export interface RouteRule {
   methods?: string[];
@@ -22,7 +21,7 @@ export function addRouteRule(methods: string[], pattern: RegExp, handler: RouteR
 /**
  * Route function reads `rules` to find proper pair which matches with URL of request
  */
-export default function route(request: RouteRequest, response: http.OutgoingMessage) {
+export default async function route(request: RouteRequest, response: http.OutgoingMessage) {
   const { url, method } = request.req;
 
   if (url === undefined) {
@@ -33,7 +32,7 @@ export default function route(request: RouteRequest, response: http.OutgoingMess
   for (const rule of rules) {
     if (false === rule.pattern.test(url)) continue;
     if (rule.methods !== undefined && rule.methods.indexOf(method) == -1) continue;
-    rule.handler(request, response);
+    await rule.handler(request, response);
     break;
   }
   response.end();
