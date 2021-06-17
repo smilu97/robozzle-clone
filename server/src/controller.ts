@@ -1,6 +1,6 @@
 import * as http from 'http';
 
-import getMaps, { convertMapIntoMeta } from './maps';
+import getMaps, { convertPuzzleIntoMeta } from './puzzle';
 import { addRouteRule } from './router';
 
 interface ControllerRequest {
@@ -28,7 +28,7 @@ class ControllerResponse {
 }
 
 async function handleMapList(request: ControllerRequest, response: ControllerResponse) {
-  const content = JSON.stringify((await getMaps()).map(convertMapIntoMeta));
+  const content = JSON.stringify((await getMaps()).map(convertPuzzleIntoMeta));
   response.send(content);
 }
 

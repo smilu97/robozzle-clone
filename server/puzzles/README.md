@@ -1,7 +1,7 @@
 # Map protocol
 
 ```javascript
-type MapDescription = {
+type PuzzleDescription = {
   name: string,
   starting: [number, number, number], // Initial [x, y, direction]
   numColors: number,
