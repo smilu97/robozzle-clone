@@ -16,6 +16,10 @@ const puzzleFilenames = fs.readdirSync(puzzlePath);
 let puzzles: PuzzleDescription[] | undefined = undefined;
 const waitings: (() => void)[] = [];
 
+/**
+ * Read all puzzle description from disc
+ * @returns List of promise of puzzle descriptions
+ */
 async function readAll() {
   return Promise.all(
     puzzleFilenames
@@ -30,6 +34,9 @@ async function readAll() {
   );
 }
 
+/**
+ * Wait until reading all puzzles is done
+ */
 async function waitLoading() {
   if (puzzles !== undefined) return;
   return new Promise<void>((resolve) => {
@@ -37,6 +44,11 @@ async function waitLoading() {
   });
 }
 
+/**
+ * Remain only metadata of puzzle description
+ * @param puz puzzle description
+ * @returns metadata of puzzle
+ */
 export function convertPuzzleIntoMeta(puz: PuzzleDescription) {
   return {
     name: puz.name,

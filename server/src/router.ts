@@ -12,14 +12,23 @@ export interface RouteRule {
   handler: RouteRuleHandler;
 }
 
+// Items are added in rules by './controller.ts'
 const rules: RouteRule[] = [];
 
+/**
+ * Add a new rule
+ * @param methods Whitelist of methods
+ * @param pattern Regular expression to test URL
+ * @param handler handler function
+ */
 export function addRouteRule(methods: string[], pattern: RegExp, handler: RouteRuleHandler) {
   rules.push({ methods, pattern, handler });
 }
 
 /**
  * Route function reads `rules` to find proper pair which matches with URL of request
+ * @param request 
+ * @param response
  */
 export default async function route(request: RouteRequest, response: http.OutgoingMessage) {
   const { url, method } = request.req;
@@ -35,5 +44,6 @@ export default async function route(request: RouteRequest, response: http.Outgoi
     await rule.handler(request, response);
     break;
   }
+
   response.end();
 }

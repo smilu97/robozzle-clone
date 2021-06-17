@@ -1,6 +1,6 @@
 import * as http from 'http';
 
-import getMaps, { convertPuzzleIntoMeta } from './puzzle';
+import getPuzzles, { convertPuzzleIntoMeta } from './puzzle';
 import { addRouteRule } from './router';
 
 interface ControllerRequest {
@@ -9,7 +9,6 @@ interface ControllerRequest {
 }
 
 type Controller = (request: ControllerRequest, response: ControllerResponse) => Promise<void>;
-
 class ControllerResponse {
   response: http.OutgoingMessage;
 
@@ -27,11 +26,22 @@ class ControllerResponse {
   }
 }
 
+/**
+ * Fetch puzzles, and send list of meta of puzzles
+ * @param request 
+ * @param response 
+ */
 async function handleMapList(request: ControllerRequest, response: ControllerResponse) {
-  const content = JSON.stringify((await getMaps()).map(convertPuzzleIntoMeta));
+  const content = JSON.stringify((await getPuzzles()).map(convertPuzzleIntoMeta));
   response.send(content);
 }
 
+/**
+ * Add rules in './router.ts'
+ * @param methods Whitelist of methods
+ * @param pattern regular expression to test URL
+ * @param controller
+ */
 function register(methods: string[], pattern: RegExp, controller: Controller) {
   addRouteRule(methods, pattern, async (request, response) => {
     const req = {
