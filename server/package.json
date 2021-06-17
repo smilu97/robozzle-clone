@@ -1,0 +1,17 @@
+{
+  "name": "robozzle-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
+  },
+  "description": "HTTP Server Application for Robozzle (not official)",
+  "repository": "https://github.com/smilu97/robozzle-clone",
+  "author": "smilu97",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/node": "^15.12.2"
+  }
+}
