@@ -1,6 +1,6 @@
 import * as http from 'http';
 
-import getPuzzles, { convertPuzzleIntoMeta } from './puzzle';
+import getPuzzles, { convertPuzzleIntoMeta, getPuzzleByName } from './puzzle';
 import { addRouteRule } from './router';
 
 interface ControllerRequest {
@@ -10,19 +10,21 @@ interface ControllerRequest {
 
 type Controller = (request: ControllerRequest, response: ControllerResponse) => Promise<void>;
 class ControllerResponse {
-  response: http.OutgoingMessage;
+  response: http.ServerResponse;
 
-  constructor(response: http.OutgoingMessage) {
+  constructor(response: http.ServerResponse) {
     this.response = response;
   }
 
-  send(content: string) {
+  send(data: string | Object, statusCode: number = 200) {
+    const content = typeof data === 'string' ? data : JSON.stringify(data);
     const chunk = Buffer.from(content);
     this.response.write(chunk, (error: Error) => {
       if (error) {
         console.error('[ERROR][Controller.send]:', error);
       }
     });
+    this.response.statusCode = statusCode;
   }
 }
 
@@ -32,8 +34,17 @@ class ControllerResponse {
  * @param response 
  */
 async function handleMapList(request: ControllerRequest, response: ControllerResponse) {
-  const content = JSON.stringify((await getPuzzles()).map(convertPuzzleIntoMeta));
-  response.send(content);
+  response.send((await getPuzzles()).map(convertPuzzleIntoMeta));
+}
+
+async function handleMapDescription(request: ControllerRequest, response: ControllerResponse) {
+  const name = request.req.url.substr('puzzle'.length + 2);
+  const puzzle = await getPuzzleByName(name);
+
+  if (puzzle === undefined)
+    return response.send({ message: 'Puzzle Not Found' }, 404);
+  
+  response.send(puzzle);
 }
 
 /**
@@ -53,4 +64,5 @@ function register(methods: string[], pattern: RegExp, controller: Controller) {
   })
 }
 
-register(['GET'], /\/maps/, handleMapList);
+register(['GET'], /\/puzzles/, handleMapList);
+register(['GET'], /\/puzzle\/.*/, handleMapDescription);

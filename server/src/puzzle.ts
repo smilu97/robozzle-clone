@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { orderByName, readFileAsync } from './util';
+
 type PuzzleDescription = {
   name: string,
   starting: [number, number, number], // Initial [x, y, direction]
@@ -14,6 +16,7 @@ const puzzlePath = process.env.ROBOZZLE_PUZZLES || './puzzles/';
 const puzzleFilenames = fs.readdirSync(puzzlePath);
 
 let puzzles: PuzzleDescription[] | undefined = undefined;
+let puzzleByName: {[x: string]: PuzzleDescription} = {};
 const waitings: (() => void)[] = [];
 
 /**
@@ -25,12 +28,10 @@ async function readAll() {
     puzzleFilenames
       .filter(filename => (/.*\.json/).test(filename))
       .map(filename => path.join(puzzlePath, filename))
-      .map(filepath => new Promise<PuzzleDescription>((resolve, reject) => {
-        fs.readFile(filepath, (err, data) => {
-          if (err) reject(err);
-          resolve(JSON.parse(data.toString()));
-        });
-      }))
+      .map(readFileAsync)
+  ).then(buffers => buffers
+    .map(buffer => buffer.toString())
+    .map(raw => JSON.parse(raw) as PuzzleDescription)
   );
 }
 
@@ -57,9 +58,20 @@ export function convertPuzzleIntoMeta(puz: PuzzleDescription) {
 
 (async function initialize() {
   puzzles = await readAll();
+  puzzleByName = orderByName(puzzles, 'name');
   waitings.forEach(fn => fn());
   console.log('[LOG] Detected puzzles:', puzzles.map(i => i.name));
 })();
+
+/**
+ * Get puzzle description by target puzzle name
+ * @param name 
+ * @returns puzzle description
+ */
+export async function getPuzzleByName(name: string) {
+  await waitLoading();
+  return puzzleByName[name];
+}
 
 export default async function getPuzzles() {
   await waitLoading();

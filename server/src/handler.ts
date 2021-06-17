@@ -3,6 +3,8 @@ import * as stream from 'stream';
 
 import route from './router';
 
+const URLLoggingBlacklist = ['/favicon.ico'];
+
 /**
  * Client error event handler
  * @param _err error
@@ -26,8 +28,9 @@ function errorEventHandler(err: Error) {
  * @param request HTTP request
  * @param response HTTP response
  */
-export default function requestHandler(request: http.IncomingMessage, response: http.OutgoingMessage) {
-  console.log('[LOG] Request URL:', request.url, 'on', Date.now());
+export default function requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
+  if (URLLoggingBlacklist.indexOf(request.url) == -1)
+    console.log('[LOG] Request URL:', request.url, 'on', Date.now());
 
   // Container for stacking up chunks from request body
   const chunks: Uint8Array[] = [];

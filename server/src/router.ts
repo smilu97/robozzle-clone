@@ -4,7 +4,7 @@ export interface RouteRequest {
   body: Buffer;
 };
 
-export type RouteRuleHandler = (request: RouteRequest, response: http.OutgoingMessage) => Promise<void>;
+export type RouteRuleHandler = (request: RouteRequest, response: http.ServerResponse) => Promise<void>;
 
 export interface RouteRule {
   methods?: string[];
@@ -30,7 +30,7 @@ export function addRouteRule(methods: string[], pattern: RegExp, handler: RouteR
  * @param request 
  * @param response
  */
-export default async function route(request: RouteRequest, response: http.OutgoingMessage) {
+export default async function route(request: RouteRequest, response: http.ServerResponse) {
   const { url, method } = request.req;
 
   if (url === undefined) {
