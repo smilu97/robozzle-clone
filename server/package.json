@@ -2,7 +2,7 @@
   "name": "robozzle-server",
   "version": "1.0.0",
   "scripts": {
-    "start": "",
+    "start": "tsc --build && node build/index.js",
     "build": "tsc --build",
     "clean": "tsc --build --clean"
   },
