@@ -1,12 +1,32 @@
 import * as fs from 'fs';
 
-export function orderByName<T extends {[x: string]: any}, K extends string>(items: T[], key: K) {
-  const result: {[x: string]: T} = {};
-  for (const item of items) {
-    result[item[key]] = item;
+export function orderByKey<
+  T extends { [key in string | number]: any },
+  K extends keyof T,
+>(
+  items: T[],
+  key: K,
+) {
+  console.log(items);
+
+  if (typeof items[0][key] !== 'string' || typeof items[0][key] !== 'number') {
+    throw new Error();
   }
+
+  const result = items.reduce<Record<T[K], T> | undefined>((acc, item) => {
+    if (acc === undefined) {
+      const temp = { [item[key]]: item };
+      return temp;
+    }
+
+    acc[item[key]] = item;
+    return acc;
+  }, undefined);
+
   return result;
 }
+
+orderByKey([], 'symbol')
 
 export function readFileAsync(filepath: string) {
   return new Promise<Buffer>((resolve, reject) => {

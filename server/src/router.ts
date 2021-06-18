@@ -1,10 +1,12 @@
 import * as http from 'http';
+
 export interface RouteRequest {
   req: http.IncomingMessage;
   body: Buffer;
 };
 
-export type RouteRuleHandler = (request: RouteRequest, response: http.ServerResponse) => Promise<void>;
+export type RouteRuleHandler =
+  (request: RouteRequest, response: http.ServerResponse) => Promise<void>;
 
 export interface RouteRule {
   methods?: string[];
@@ -38,9 +40,13 @@ export default async function route(request: RouteRequest, response: http.Server
     return;
   }
 
+  if (method === undefined) {
+    return response.end();
+  }
+
   for (const rule of rules) {
     if (false === rule.pattern.test(url)) continue;
-    if (rule.methods !== undefined && rule.methods.indexOf(method) == -1) continue;
+    if (rule.methods && !rule.methods.includes(method)) continue;
     await rule.handler(request, response);
     break;
   }

@@ -16,10 +16,10 @@ class ControllerResponse {
     this.response = response;
   }
 
-  send(data: string | Object, statusCode: number = 200) {
+  send(data: string | Record<string, unknown> | unknown[], statusCode: number = 200) {
     const content = typeof data === 'string' ? data : JSON.stringify(data);
     const chunk = Buffer.from(content);
-    this.response.write(chunk, (error: Error) => {
+    this.response.write(chunk, (error: Error | null | undefined) => {
       if (error) {
         console.error('[ERROR][Controller.send]:', error);
       }
@@ -34,11 +34,15 @@ class ControllerResponse {
  * @param response 
  */
 async function handleMapList(request: ControllerRequest, response: ControllerResponse) {
-  response.send((await getPuzzles()).map(convertPuzzleIntoMeta));
+  const puzzles = await getPuzzles();
+  
+  if (puzzles) {
+    response.send(puzzles.map(convertPuzzleIntoMeta));
+  }
 }
 
 async function handleMapDescription(request: ControllerRequest, response: ControllerResponse) {
-  const name = request.req.url.substr('puzzle'.length + 2);
+  const name = request.req.url?.substr('puzzle'.length + 2) ?? '';
   const puzzle = await getPuzzleByName(name);
 
   if (puzzle === undefined)

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { orderByName, readFileAsync } from './util';
+import { orderByKey, readFileAsync } from './util';
 
 type PuzzleDescription = {
   name: string,
@@ -16,7 +16,7 @@ const puzzlePath = process.env.ROBOZZLE_PUZZLES || './puzzles/';
 const puzzleFilenames = fs.readdirSync(puzzlePath);
 
 let puzzles: PuzzleDescription[] | undefined = undefined;
-let puzzleByName: {[x: string]: PuzzleDescription} = {};
+let puzzleByName: {[x: string]: PuzzleDescription} | undefined = undefined;
 const waitings: (() => void)[] = [];
 
 /**
@@ -58,7 +58,9 @@ export function convertPuzzleIntoMeta(puz: PuzzleDescription) {
 
 (async function initialize() {
   puzzles = await readAll();
-  puzzleByName = orderByName(puzzles, 'name');
+  if (puzzles === undefined) return;
+
+  puzzleByName = orderByKey(puzzles, 'name');
   waitings.forEach(fn => fn());
   console.log('[LOG] Detected puzzles:', puzzles.map(i => i.name));
 })();
@@ -70,7 +72,7 @@ export function convertPuzzleIntoMeta(puz: PuzzleDescription) {
  */
 export async function getPuzzleByName(name: string) {
   await waitLoading();
-  return puzzleByName[name];
+  return puzzleByName?.[name] ?? {};
 }
 
 export default async function getPuzzles() {

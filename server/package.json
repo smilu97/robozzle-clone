@@ -4,7 +4,8 @@
   "scripts": {
     "start": "tsc --build && node build/index.js",
     "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "test": "jest"
   },
   "description": "HTTP Server Application for Robozzle (not official)",
   "repository": "https://github.com/smilu97/robozzle-clone",
@@ -12,7 +13,11 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.12.2",
+    "jest": "^27.0.4",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^10.0.0",
     "typescript": "^4.3.4"
   }
 }
