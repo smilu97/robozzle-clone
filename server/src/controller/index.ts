@@ -26,32 +26,7 @@ export class ControllerResponse {
   }
 }
 
-<<<<<<< HEAD:server/src/controller.ts
-/**
- * Fetch puzzles, and send list of meta of puzzles
- * @param request 
- * @param response 
- */
-async function handleMapList(request: ControllerRequest, response: ControllerResponse) {
-  const puzzles = await getPuzzles();
-  
-  if (puzzles) {
-    response.send(puzzles.map(convertPuzzleIntoMeta));
-  }
-}
-
-async function handleMapDescription(request: ControllerRequest, response: ControllerResponse) {
-  const name = request.req.url?.substr('puzzle'.length + 2) ?? '';
-  const puzzle = await getPuzzleByName(name);
-
-  if (puzzle === undefined)
-    return response.send({ message: 'Puzzle Not Found' }, 404);
-  
-  response.send(puzzle);
-}
-=======
 type Controller = (request: ControllerRequest, response: ControllerResponse) => Promise<void>;
->>>>>>> master:server/src/controller/index.ts
 
 function buildRouteHandler(controller: Controller) {
   return async (request: RouteRequest, response: http.ServerResponse) => {
