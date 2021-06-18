@@ -7,9 +7,7 @@ export function orderByKey<
   items: T[],
   key: K,
 ) {
-  console.log(items);
-
-  if (typeof items[0][key] !== 'string' || typeof items[0][key] !== 'number') {
+  if (typeof items[0][key] !== 'string' && typeof items[0][key] !== 'number') {
     throw new Error();
   }
 
@@ -25,8 +23,6 @@ export function orderByKey<
 
   return result;
 }
-
-orderByKey([], 'symbol')
 
 export function readFileAsync(filepath: string) {
   return new Promise<Buffer>((resolve, reject) => {
