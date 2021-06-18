@@ -15,7 +15,7 @@ export interface RouteRule {
 }
 
 // Items are added in rules by './controller.ts'
-const rules: RouteRule[] = [];
+export const rules: RouteRule[] = [];
 
 /**
  * Add a new rule

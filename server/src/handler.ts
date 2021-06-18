@@ -19,7 +19,8 @@ function clientErrorEventHandler(_err: Error, socket: stream.Duplex) {
  * @param err error
  */
 function errorEventHandler(err: Error) {
-  console.error('[ERROR][errorEventHandler]: ', err);
+  if (process.env.NODE_ENV !== 'test')
+    console.error('[ERROR][errorEventHandler]: ', err);
 }
 
 /**

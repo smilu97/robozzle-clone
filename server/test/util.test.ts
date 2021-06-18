@@ -45,10 +45,5 @@ test('readFileAsync', async () => {
 
 test('readFileAsync: wrong filepath', async () => {
   const sampleFile = './puzzles/DONT_README.md';
-  try {
-    await util.readFileAsync(sampleFile);
-    expect(true).toBeFalsy();
-  } catch (e) {
-    expect(true).toBeTruthy();
-  }
+  await expect(util.readFileAsync(sampleFile)).rejects.toThrow();
 });

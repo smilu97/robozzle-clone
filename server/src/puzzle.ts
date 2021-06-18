@@ -58,8 +58,6 @@ export function convertPuzzleIntoMeta(puz: PuzzleDescription) {
 
 (async function initialize() {
   puzzles = await readAll();
-  if (puzzles === undefined) return;
-
   puzzleByName = orderByKey(puzzles, 'name');
   waitings.forEach(fn => fn());
   console.log('[LOG] Detected puzzles:', puzzles.map(i => i.name));

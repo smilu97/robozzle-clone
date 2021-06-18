@@ -1,15 +1,13 @@
 import * as http from 'http';
 
-import getPuzzles, { convertPuzzleIntoMeta, getPuzzleByName } from './puzzle';
-import { addRouteRule } from './router';
+import { addRouteRule } from '../router';
 
-interface ControllerRequest {
+export interface ControllerRequest {
   req: http.IncomingMessage,
   body: Buffer,
 }
 
-type Controller = (request: ControllerRequest, response: ControllerResponse) => Promise<void>;
-class ControllerResponse {
+export class ControllerResponse {
   response: http.ServerResponse;
 
   constructor(response: http.ServerResponse) {
@@ -28,6 +26,7 @@ class ControllerResponse {
   }
 }
 
+<<<<<<< HEAD:server/src/controller.ts
 /**
  * Fetch puzzles, and send list of meta of puzzles
  * @param request 
@@ -50,6 +49,9 @@ async function handleMapDescription(request: ControllerRequest, response: Contro
   
   response.send(puzzle);
 }
+=======
+type Controller = (request: ControllerRequest, response: ControllerResponse) => Promise<void>;
+>>>>>>> master:server/src/controller/index.ts
 
 /**
  * Add rules in './router.ts'
@@ -57,7 +59,7 @@ async function handleMapDescription(request: ControllerRequest, response: Contro
  * @param pattern regular expression to test URL
  * @param controller
  */
-function register(methods: string[], pattern: RegExp, controller: Controller) {
+export function register(methods: string[], pattern: RegExp, controller: Controller) {
   addRouteRule(methods, pattern, async (request, response) => {
     const req = {
       req: request.req,
@@ -67,6 +69,3 @@ function register(methods: string[], pattern: RegExp, controller: Controller) {
     await controller(req, res);
   })
 }
-
-register(['GET'], /\/puzzles/, handleMapList);
-register(['GET'], /\/puzzle\/.*/, handleMapDescription);
