@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as router from '../src/router';
 
-function mockRequest(method: string, url: string) {
+function mockRequest(method: string, url?: string) {
   return {
     req: { url, method } as http.IncomingMessage,
     body: Buffer.from('DEADBEEF'),

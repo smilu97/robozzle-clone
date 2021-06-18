@@ -14,10 +14,10 @@ export class ControllerResponse {
     this.response = response;
   }
 
-  send(data: string | Object, statusCode: number = 200) {
+  send(data: string | Record<string, unknown> | unknown[], statusCode: number = 200) {
     const content = typeof data === 'string' ? data : JSON.stringify(data);
     const chunk = Buffer.from(content);
-    this.response.write(chunk, (error: Error) => {
+    this.response.write(chunk, (error: Error | null | undefined) => {
       if (error) {
         console.error('[ERROR][Controller.send]:', error);
       }

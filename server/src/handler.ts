@@ -30,8 +30,9 @@ function errorEventHandler(err: Error) {
  * @param response HTTP response
  */
 export default function requestHandler(request: http.IncomingMessage, response: http.ServerResponse) {
-  if (URLLoggingBlacklist.indexOf(request.url) == -1)
+  if (request.url && !URLLoggingBlacklist.includes(request.url)) {
     console.log('[LOG] Request URL:', request.url, 'on', Date.now());
+  }
 
   // Container for stacking up chunks from request body
   const chunks: Uint8Array[] = [];

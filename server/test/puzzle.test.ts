@@ -7,6 +7,7 @@ test('Load sample tutorial puzzle', async () => {
 
 test('Load sample tutorial puzzle', async () => {
   const puz = await puzzle.default();
+
   expect(puz).toHaveProperty('length');
   expect(puz[0]).toHaveProperty('name');
 });

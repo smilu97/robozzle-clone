@@ -8,7 +8,10 @@ import { ControllerRequest, ControllerResponse } from '.';
  * @param response 
  */
 export async function handleMapList(request: ControllerRequest, response: ControllerResponse) {
-  response.send((await getPuzzles()).map(convertPuzzleIntoMeta));
+  const puzzles = await getPuzzles();
+  if (puzzles === undefined) return;
+
+  response.send(puzzles.map(convertPuzzleIntoMeta));
 }
 
 /**
@@ -17,7 +20,7 @@ export async function handleMapList(request: ControllerRequest, response: Contro
  * @param response
  */
 export async function handleMapDescription(request: ControllerRequest, response: ControllerResponse) {
-  const name = request.req.url.substr('puzzle'.length + 2);
+  const name = request.req.url?.substr('puzzle'.length + 2) ?? '';
   const puzzle = await getPuzzleByName(name);
 
   if (puzzle === undefined)

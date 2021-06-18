@@ -16,7 +16,7 @@ const puzzlePath = process.env.ROBOZZLE_PUZZLES || './puzzles/';
 const puzzleFilenames = fs.readdirSync(puzzlePath);
 
 let puzzles: PuzzleDescription[] | undefined = undefined;
-let puzzleByName: {[x: string]: PuzzleDescription} = {};
+let puzzleByName: {[x: string]: PuzzleDescription} | undefined = undefined;
 const waitings: (() => void)[] = [];
 
 /**
@@ -70,7 +70,7 @@ export function convertPuzzleIntoMeta(puz: PuzzleDescription) {
  */
 export async function getPuzzleByName(name: string) {
   await waitLoading();
-  return puzzleByName[name];
+  return puzzleByName?.[name] ?? {};
 }
 
 export default async function getPuzzles() {
