@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { orderByName, readFileAsync } from './util';
+import { orderByKey, readFileAsync } from './util';
 
 type PuzzleDescription = {
   name: string,
@@ -58,7 +58,7 @@ export function convertPuzzleIntoMeta(puz: PuzzleDescription) {
 
 (async function initialize() {
   puzzles = await readAll();
-  puzzleByName = orderByName(puzzles, 'name');
+  puzzleByName = orderByKey(puzzles, 'name');
   waitings.forEach(fn => fn());
   console.log('[LOG] Detected puzzles:', puzzles.map(i => i.name));
 })();

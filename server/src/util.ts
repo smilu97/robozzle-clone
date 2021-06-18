@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-export function orderByName<T extends {[x: string]: any}, K extends string>(items: T[], key: K) {
+export function orderByKey<T extends {[x: string]: any}, K extends string>(items: T[], key: K) {
   const result: {[x: string]: T} = {};
   for (const item of items) {
     result[item[key]] = item;
