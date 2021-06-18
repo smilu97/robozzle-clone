@@ -1,6 +1,6 @@
 import * as http from 'http';
 
-import { addRouteRule } from '../router';
+import { addRouteRule, RouteRequest } from '../router';
 
 export interface ControllerRequest {
   req: http.IncomingMessage,
@@ -53,6 +53,17 @@ async function handleMapDescription(request: ControllerRequest, response: Contro
 type Controller = (request: ControllerRequest, response: ControllerResponse) => Promise<void>;
 >>>>>>> master:server/src/controller/index.ts
 
+function buildRouteHandler(controller: Controller) {
+  return async (request: RouteRequest, response: http.ServerResponse) => {
+    const req = {
+      req: request.req,
+      body: request.body,
+    };
+    const res = new ControllerResponse(response);
+    await controller(req, res);
+  };
+}
+
 /**
  * Add rules in './router.ts'
  * @param methods Whitelist of methods
@@ -60,12 +71,5 @@ type Controller = (request: ControllerRequest, response: ControllerResponse) => 
  * @param controller
  */
 export function register(methods: string[], pattern: RegExp, controller: Controller) {
-  addRouteRule(methods, pattern, async (request, response) => {
-    const req = {
-      req: request.req,
-      body: request.body,
-    };
-    const res = new ControllerResponse(response);
-    await controller(req, res);
-  })
+  addRouteRule(methods, pattern, buildRouteHandler(controller));
 }
