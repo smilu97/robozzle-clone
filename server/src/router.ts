@@ -36,13 +36,16 @@ export default async function route(request: RouteRequest, response: http.Server
   const { url, method } = request.req;
 
   if (url === undefined) {
-    response.end();
-    return;
+    return response.end();
   }
 
   if (method === undefined) {
     return response.end();
   }
+
+  response.setHeader('Accept', 'application/json');
+  response.setHeader('Access-Control-Allow-Origin', 'http://localhost:1234');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTION');
 
   for (const rule of rules) {
     if (false === rule.pattern.test(url)) continue;
