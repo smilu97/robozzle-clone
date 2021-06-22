@@ -1,14 +1,14 @@
-import { buildCall, RobozzleActionOperation, RobozzleCallOperation, RobozzleFunction, RobozzleOperation, RobozzleOpTypes } from './op';
-import Stack from './stack';
+import { RobozzleActionOperation, RobozzleCallOperation, RobozzleOperation, RobozzleOpTypes, RobozzleWriteOperation } from './op';
+import Stack from '../util/stack';
 
 export default class OpStack {
-    stack = new Stack<RobozzleOperation>();
+    private stack = new Stack<RobozzleOperation>();
 
     push(op: RobozzleOperation): void {
         this.stack.push(op);
     }
 
-    pop(): RobozzleActionOperation | null {
+    pop(): RobozzleActionOperation | RobozzleWriteOperation | null {
         this._resolveCalls();
 
         if (this.stack.isEmpty())
@@ -16,7 +16,11 @@ export default class OpStack {
         
         const top = this.stack.top();
 
-        return top as RobozzleActionOperation | null;
+        return top as RobozzleActionOperation | RobozzleWriteOperation | null;
+    }
+
+    isEmpty() {
+        return this.stack.isEmpty();
     }
 
     private _resolveCalls() {

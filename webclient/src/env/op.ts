@@ -1,20 +1,30 @@
+import { RobozzleFunction } from "./fn";
+
 const ROBOZZLE_ACTION_FORWARD = 'ROBOZZLE/ACTION/FORWARD';
 const ROBOZZLE_ACTION_LEFT    = 'ROBOZZLE/ACTION/LEFT';
 const ROBOZZLE_ACTION_RIGHT   = 'ROBOZZLE/ACTION/RIGHT';
 
+const ROBOZZLE_OPTYPE_EMPTY  = 'ROBOZZLE/OPTYPE/EMPTY';
 const ROBOZZLE_OPTYPE_ACTION = 'ROBOZZLE/OPTYPE/ACTION';
 const ROBOZZLE_OPTYPE_CALL   = 'ROBOZZLE/OPTYPE/CALL';
 const ROBOZZLE_OPTYPE_WRITE  = 'ROBOZZLE/OPTYPE/WRITE';
 
 export type RobozzleOpType =
+    | 'ROBOZZLE/OPTYPE/EMPTY'
     | 'ROBOZZLE/OPTYPE/ACTION'
     | 'ROBOZZLE/OPTYPE/CALL'
     | 'ROBOZZLE/OPTYPE/WRITE';
 
-export const RobozzleOpTypes = {
+export const RobozzleOpTypes: {
+    empty:  'ROBOZZLE/OPTYPE/EMPTY',
+    action: 'ROBOZZLE/OPTYPE/ACTION',
+    call:   'ROBOZZLE/OPTYPE/CALL',
+    write:  'ROBOZZLE/OPTYPE/WRITE',
+} = {
+    empty:  ROBOZZLE_OPTYPE_EMPTY,
     action: ROBOZZLE_OPTYPE_ACTION,
-    call: ROBOZZLE_OPTYPE_CALL,
-    write: ROBOZZLE_OPTYPE_WRITE,
+    call:   ROBOZZLE_OPTYPE_CALL,
+    write:  ROBOZZLE_OPTYPE_WRITE,
 }
 
 export type RobozzleAction = 
@@ -24,36 +34,43 @@ export type RobozzleAction =
 
 export type RobozzleColor = number;
 
-export const RobozzleActions = {
+export const RobozzleActions: {
+    forward: 'ROBOZZLE/ACTION/FORWARD',
+    left:    'ROBOZZLE/ACTION/LEFT',
+    right:   'ROBOZZLE/ACTION/RIGHT',
+} = {
     forward: ROBOZZLE_ACTION_FORWARD,
-    left: ROBOZZLE_ACTION_LEFT,
-    right: ROBOZZLE_ACTION_RIGHT,
+    left:    ROBOZZLE_ACTION_LEFT,
+    right:   ROBOZZLE_ACTION_RIGHT,
 };
 
-export interface RobozzleFunction {
-    seq: RobozzleOperation[];
-}
-
-export interface RobozzleOperationCommon {
-    type: RobozzleOpType;
+export type RobozzleOperationCommon = {
     condition: {
         color: RobozzleColor;
     }
 };
 
-export interface RobozzleCallOperation extends RobozzleOperationCommon {
+export type RobozzleEmptyOperation = RobozzleOperationCommon & {
+    type: 'ROBOZZLE/OPTYPE/EMPTY',
+};
+
+export type RobozzleCallOperation = RobozzleOperationCommon & {
+    type: 'ROBOZZLE/OPTYPE/CALL',
     callee: RobozzleFunction;
 }
 
-export interface RobozzleActionOperation extends RobozzleOperationCommon {
+export type RobozzleActionOperation = RobozzleOperationCommon & {
+    type: 'ROBOZZLE/OPTYPE/ACTION',
     action: RobozzleAction;
 }
 
-export interface RobozzleWriteOperation extends RobozzleOperationCommon {
+export type RobozzleWriteOperation = RobozzleOperationCommon & {
+    type: 'ROBOZZLE/OPTYPE/WRITE',
     color: RobozzleColor;
 }
 
 export type RobozzleOperation =
+    | RobozzleEmptyOperation
     | RobozzleCallOperation
     | RobozzleActionOperation
     | RobozzleWriteOperation;
@@ -81,3 +98,8 @@ export function buildWrite(color: RobozzleColor, writeColor: RobozzleColor): Rob
         color: writeColor,
     }
 }
+
+export const emptyOp: RobozzleOperation = {
+    type: ROBOZZLE_OPTYPE_EMPTY,
+    condition: { color: 0 },
+};

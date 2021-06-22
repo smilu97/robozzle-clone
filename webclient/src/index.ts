@@ -1,10 +1,8 @@
 import { gridDim } from './constant';
-import OpStack from './opStack';
 
 class RobozzleClient {
     root = document.createElement('div');
     container = document.createElement('div');
-    opStack = new OpStack();
 
     constructor() {
         /**
