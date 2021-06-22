@@ -1,5 +1,5 @@
 import { buildFunction, RobozzleFunction } from "./fn";
-import { buildAction, buildWrite, RobozzleAction, RobozzleActionOperation, RobozzleActions, RobozzleColor, RobozzleOpTypes, RobozzleWriteOperation } from "./op";
+import { buildAction, buildCall, buildWrite, RobozzleAction, RobozzleActionOperation, RobozzleActions, RobozzleCallOperation, RobozzleColor, RobozzleOpTypes, RobozzleWriteOperation } from "./op";
 import OpStack from "./opStack";
 import { PuzzleDescription } from "./puzzle";
 
@@ -24,7 +24,7 @@ interface Tile {
 
 type WriteAction = {
     type: 'ACTION/WRITE',
-    content: RobozzleActionOperation | RobozzleWriteOperation;
+    content: RobozzleActionOperation | RobozzleWriteOperation | RobozzleCallOperation;
 }
 
 type ColorAction = {
@@ -53,6 +53,7 @@ export default class Robozzle {
     numColors: number = 0;
     writableColors: boolean[] = [];
     stepped = false;
+    done = false;
 
     tiles: Tile[][];
     width: number;
@@ -70,9 +71,14 @@ export default class Robozzle {
         this.botState = null;
     }
 
+    /**
+     * Reset environment by a new puzzle description
+     * @param puzzle puzzle description from API server
+     */
     reset(puzzle: PuzzleDescription) {
         this.puzzle = puzzle;
         this.stepped = false;
+        this.done = false;
 
         const { starting, numColors, writableColors, tiles, memory } = puzzle;
 
@@ -89,13 +95,19 @@ export default class Robozzle {
         this._resetFunctions(memory);
     }
 
+    /**
+     * Process any user interactions
+     * @param action user action
+     * @returns if env is done
+     */
     step(action: Action): boolean {
         if (this.puzzle === null) {
             console.error('Robozzle: Attempted step() before reset');
             return true;
         }
 
-        let done = false;
+        if (this.done)
+            return true;
 
         if (this.stepped && action.type !== 'ACTION/STEP')
             return false;
@@ -125,7 +137,7 @@ export default class Robozzle {
                 }
                 break;
             case 'ACTION/STEP':
-                done = this._step();
+                this.done = this._step();
                 break;
             case 'ACTION/WRITE':
                 const { content } = action;
@@ -133,18 +145,28 @@ export default class Robozzle {
                 break;
         }
 
-        return done;
+        return this.done;
     }
 
+    /**
+     * step simulation
+     * @returns if env is done
+     */
     private _step(): boolean {
-        this.stepped = true;
+        if (false === this.stepped) {
+            this.stepped = true;
+            const callee = this.functions[0];
+            const call = buildCall(0, callee);
+            this.opStack.push(call);
+        }
+        
         const op = this.opStack.pop();
         if (op === null) return true; // The stack is empty
         if (this.botState === null) return true; // The game is not reset
 
         switch (op.type) {
             case RobozzleOpTypes.action:
-                this._act(op.action);
+                this._move(op.action);
                 break;
             case RobozzleOpTypes.write:
                 const { x, y } = this.botState;
@@ -155,7 +177,11 @@ export default class Robozzle {
         return false;
     }
 
-    private _act(action: RobozzleAction) {
+    /**
+     * move robozzle bot
+     * @param action robozzle bot action
+     */
+    private _move(action: RobozzleAction) {
         switch (action) {
             case RobozzleActions.forward:
                 this._forward();
@@ -169,6 +195,9 @@ export default class Robozzle {
         }
     }
 
+    /**
+     * Move robozzle bot forward
+     */
     private _forward() {
         if (this.botState === null) return;
         const { direction } = this.botState;
@@ -180,13 +209,21 @@ export default class Robozzle {
         this.botState.y += diff[1];
     }
 
+    /**
+     * Rotate robozzle bot
+     * @param diff How many degrees bot rotates (90degrees * diff)
+     */
     private _rotate(diff: number) {
         if (this.botState === null) return;
         const current = this.botState.direction;
         this.botState.direction = (current + diff + 4) % 4;
     }
 
-    private _writeAction(content: RobozzleActionOperation | RobozzleWriteOperation) {
+    /**
+     * Write action in current function sequence
+     * @param content the content for the action to be written in current function sequence item
+     */
+    private _writeAction(content: RobozzleActionOperation | RobozzleWriteOperation | RobozzleCallOperation) {
         if (this.cursor === null) return;
         const [fnIndex, index] = this.cursor;
         const fn = this.functions[fnIndex];
@@ -198,9 +235,17 @@ export default class Robozzle {
             case RobozzleOpTypes.write:
                 fn.seq[index] = buildWrite(prevCondition.color, content.color);
                 break;
+            case RobozzleOpTypes.call:
+                fn.seq[index] = buildCall(prevCondition.color, content.callee);
+                break;
         }
     }
 
+    /**
+     * initialize discretized simulation space (tiles)
+     * @param width the width of tile
+     * @param height the height of tile
+     */
     private _initTiles(width: number, height: number) {
         this.width = width;
         this.height = height;
@@ -219,6 +264,10 @@ export default class Robozzle {
         }
     }
 
+    /**
+     * Apply descriptions for reachable tiles
+     * @param tiles descriptions of reachable tiles which are fetched from API server
+     */
     private _resetTiles(tiles: [number, number, number, boolean][]) {
         for (const desc of tiles) {
             const [x, y, color, hasStar] = desc;
@@ -229,6 +278,10 @@ export default class Robozzle {
         }
     }
 
+    /**
+     * initialize functions
+     * @param memory the sizes of functions
+     */
     private _resetFunctions(memory: number[]) {
         this.functions = [];
         for (const n of memory) {
