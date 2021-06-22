@@ -11,6 +11,7 @@ class RobozzleClient {
          *   <div id="root">
          *     <div id="container"></div>
          *   </div>
+         *   ...
          * </body>
          */
         this.root.id = 'root';

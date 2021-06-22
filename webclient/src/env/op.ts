@@ -32,7 +32,7 @@ export type RobozzleAction =
     | 'ROBOZZLE/ACTION/LEFT'
     | 'ROBOZZLE/ACTION/RIGHT';
 
-export type RobozzleColor = number;
+export type RobozzleColor = number; // 0: transparent(no color), 1, 2, ...: index
 
 export const RobozzleActions: {
     forward: 'ROBOZZLE/ACTION/FORWARD',
@@ -75,6 +75,12 @@ export type RobozzleOperation =
     | RobozzleActionOperation
     | RobozzleWriteOperation;
 
+/**
+ * Build robozzle action operation
+ * @param color 
+ * @param action 
+ * @returns robozzle actin operation
+ */
 export function buildAction(color: RobozzleColor, action: RobozzleAction): RobozzleActionOperation {
     return {
         type: ROBOZZLE_OPTYPE_ACTION,
@@ -83,6 +89,12 @@ export function buildAction(color: RobozzleColor, action: RobozzleAction): Roboz
     };
 }
 
+/**
+ * Build robozzle call operation
+ * @param color 
+ * @param callee 
+ * @returns robozzle call operation
+ */
 export function buildCall(color: RobozzleColor, callee: RobozzleFunction): RobozzleCallOperation {
     return {
         type: ROBOZZLE_OPTYPE_CALL,
@@ -91,6 +103,12 @@ export function buildCall(color: RobozzleColor, callee: RobozzleFunction): Roboz
     };
 }
 
+/**
+ * Build robozzle write operation
+ * @param color 
+ * @param writeColor 
+ * @returns robozzle write operation
+ */
 export function buildWrite(color: RobozzleColor, writeColor: RobozzleColor): RobozzleWriteOperation {
     return {
         type: ROBOZZLE_OPTYPE_WRITE,
@@ -99,6 +117,9 @@ export function buildWrite(color: RobozzleColor, writeColor: RobozzleColor): Rob
     }
 }
 
+/**
+ * Pre-defined empty operation
+ */
 export const emptyOp: RobozzleOperation = {
     type: ROBOZZLE_OPTYPE_EMPTY,
     condition: { color: 0 },

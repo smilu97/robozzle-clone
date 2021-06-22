@@ -1,26 +1,37 @@
 export default class Stack<T> {
     head: StackNode<T> | null = null;
 
+    /**
+     * push item into the stack
+     * @param item
+     */
     push(item: T): void {
         const newNode = { item, next: this.head };
         this.head = newNode;
     }
 
+    /**
+     * pop item from the stack
+     * @returns the item on the top of this stack
+     */
     pop(): T | null {
         const result = this.head;
-        if (this.head !== null) {
-            this.head = this.head.next;
-        }
+        this.head = this.head?.next || null;
         return result?.item || null;
     }
 
+    /**
+     * get the top-item
+     * @returns the item on the top of this stack
+     */
     top(): T | null {
-        if (this.head === null)
-            return null;
-        
-        return this.head.item;
+        return this.head?.item || null;
     }
 
+    /**
+     * check if this stack is empty
+     * @returns if this stack is empty
+     */
     isEmpty(): boolean {
         return this.head === null;
     }
