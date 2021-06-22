@@ -1,4 +1,4 @@
-import { RobozzleFunction } from "./fn";
+import { buildFunction, RobozzleFunction } from "./fn";
 import { buildAction, buildWrite, RobozzleAction, RobozzleActionOperation, RobozzleActions, RobozzleColor, RobozzleOpTypes, RobozzleWriteOperation } from "./op";
 import OpStack from "./opStack";
 import { PuzzleDescription } from "./puzzle";
@@ -50,6 +50,9 @@ export default class Robozzle {
     functions: RobozzleFunction[] = [];
     puzzle: PuzzleDescription | null = null;
     cursor: [number, number] | null = null;
+    numColors: number = 0;
+    writableColors: boolean[] = [];
+    stepped = false;
 
     tiles: Tile[][];
     width: number;
@@ -69,6 +72,21 @@ export default class Robozzle {
 
     reset(puzzle: PuzzleDescription) {
         this.puzzle = puzzle;
+        this.stepped = false;
+
+        const { starting, numColors, writableColors, tiles, memory } = puzzle;
+
+        this.botState = {
+            x: starting[0],
+            y: starting[1],
+            direction: starting[2],
+        };
+
+        this.numColors = numColors;
+        this.writableColors = writableColors;
+        
+        this._resetTiles(tiles);
+        this._resetFunctions(memory);
     }
 
     step(action: Action): boolean {
@@ -78,6 +96,9 @@ export default class Robozzle {
         }
 
         let done = false;
+
+        if (this.stepped && action.type !== 'ACTION/STEP')
+            return false;
 
         switch (action.type) {
             case 'ACTION/COLOR':
@@ -116,6 +137,7 @@ export default class Robozzle {
     }
 
     private _step(): boolean {
+        this.stepped = true;
         const op = this.opStack.pop();
         if (op === null) return true; // The stack is empty
         if (this.botState === null) return true; // The game is not reset
@@ -194,6 +216,24 @@ export default class Robozzle {
                 });
             }
             this.tiles.push(row);
+        }
+    }
+
+    private _resetTiles(tiles: [number, number, number, boolean][]) {
+        for (const desc of tiles) {
+            const [x, y, color, hasStar] = desc;
+            const tile = this.tiles[x][y];
+            tile.color = color;
+            tile.star = hasStar;
+            tile.reachable = true;
+        }
+    }
+
+    private _resetFunctions(memory: number[]) {
+        this.functions = [];
+        for (const n of memory) {
+            const fn = buildFunction(n);
+            this.functions.push(fn);
         }
     }
 }

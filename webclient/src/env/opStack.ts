@@ -28,7 +28,10 @@ export default class OpStack {
             const callee = this._getCalleeOnTop();
             if (callee === null) break;
 
-            callee.seq.reverse().forEach(this.stack.push);
+            callee.seq
+                .filter((el) => el.type !== RobozzleOpTypes.empty)
+                .reverse()
+                .forEach(this.stack.push);
         }
     }
 
