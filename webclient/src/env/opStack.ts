@@ -1,4 +1,10 @@
-import { RobozzleActionOperation, RobozzleCallOperation, RobozzleOperation, RobozzleOpTypes, RobozzleWriteOperation } from './op';
+import {
+    RobozzleActionOperation,
+    RobozzleCallOperation,
+    RobozzleOperation,
+    RobozzleOpTypes,
+    RobozzleWriteOperation,
+} from './op';
 import Stack from '../util/stack';
 
 export default class OpStack {

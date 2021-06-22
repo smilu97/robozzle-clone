@@ -3,17 +3,12 @@
     --grid-size: 40px;
     --grid-dim-width: 20;
     --grid-dim-height: 20;
+
+    margin: 0;
+    padding: 0;
 }
 
-#root {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    height: 100vh;
-}
-
-#container {
+#sim-box {
     background: #7f00ff;
     width: calc(var(--grid-size) * var(--grid-dim-width));
     height: calc(var(--grid-size) * var(--grid-dim-height));
@@ -27,6 +22,6 @@
     width: var(--grid-size);
     height: var(--grid-size);
     border-width: 1px 0 0 1px;
-    border-color: black;
+    border-color: #111;
     border-style: solid;
 }

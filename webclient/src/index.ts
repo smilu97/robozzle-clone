@@ -1,45 +1,32 @@
-import { gridDim } from './constant';
+import RobozzleClient from './render';
 
-class RobozzleClient {
-    root = document.createElement('div');
-    container = document.createElement('div');
+function run() {
+    const simBox        = document.getElementById('sim-box')        as (HTMLDivElement | null);
+    const actionControl = document.getElementById('action-control') as (HTMLDivElement | null);
+    const fnControl     = document.getElementById('fn-control')     as (HTMLDivElement | null);
+    const writeControl  = document.getElementById('write-control')  as (HTMLDivElement | null);
+    const colorControl  = document.getElementById('color-control')  as (HTMLDivElement | null);
 
-    constructor() {
-        /**
-         * Setup DOM structure
-         * <body>
-         *   <div id="root">
-         *     <div id="container"></div>
-         *   </div>
-         *   ...
-         * </body>
-         */
-        this.root.id = 'root';
-        this.container.id = 'container';
-        this.root.appendChild(this.container);
-        document.body.append(this.root);
-    }
-    
-    appendGrid() {
-        const ele = document.createElement('div');
-        ele.className = 'grid';
-        this.container.appendChild(ele);
-    }
-    
-    /**
-     * Push grid 
-     */
-    setupGrid() {
-        const gridNum = gridDim[0] * gridDim[1];
-        for (let i = 0; i < gridNum; i += 1) {
-            this.appendGrid();
-        }
+    if (
+        simBox        === null ||
+        actionControl === null ||
+        fnControl     === null ||
+        writeControl  === null ||
+        colorControl  === null
+    ) {
+        console.error('Invalid HTML environment');
+        return;
     }
 
-    setup() {
-        this.setupGrid();
-    }
+    const elements = {
+        simBox,
+        actionControl,
+        fnControl,
+        writeControl,
+        colorControl,
+    };
+
+    const client = new RobozzleClient(elements);
 }
 
-const client = new RobozzleClient();
-client.setup();
+run();

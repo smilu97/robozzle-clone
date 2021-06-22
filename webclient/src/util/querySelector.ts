@@ -39,4 +39,5 @@ type QueryResult<T extends string> = MatchEachElement<GetElementNames<T>>;
 
 // declare function querySelector<T extends string>(query: T): QueryResult<T>;
 
-export const querySelector = document.querySelector as <T extends string>(query: T) => QueryResult<T>;
+const querySelector = document.querySelector as <T extends string>(query: T) => QueryResult<T>;
+export default querySelector;

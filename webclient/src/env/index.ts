@@ -1,5 +1,16 @@
 import { buildFunction, RobozzleFunction } from "./fn";
-import { buildAction, buildCall, buildWrite, RobozzleAction, RobozzleActionOperation, RobozzleActions, RobozzleCallOperation, RobozzleColor, RobozzleOpTypes, RobozzleWriteOperation } from "./op";
+import {
+    buildAction,
+    buildCall,
+    buildWrite,
+    RobozzleAction,
+    RobozzleActionOperation,
+    RobozzleActions,
+    RobozzleCallOperation,
+    RobozzleColor,
+    RobozzleOpTypes,
+    RobozzleWriteOperation,
+} from "./op";
 import OpStack from "./opStack";
 import { PuzzleDescription } from "./puzzle";
 
@@ -11,7 +22,7 @@ interface BotState {
     direction: Direction;
 }
 
-interface RobozzleOption {
+export interface RobozzleOption {
     width: number;
     height: number;
 }
