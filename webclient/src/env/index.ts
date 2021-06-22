@@ -166,7 +166,9 @@ export default class Robozzle {
 
         switch (op.type) {
             case RobozzleOpTypes.action:
-                this._move(op.action);
+                // Move robot, and check if robot is on unreachable area
+                if (this._move(op.action))
+                    return true;
                 break;
             case RobozzleOpTypes.write:
                 const { x, y } = this.botState;
@@ -180,8 +182,9 @@ export default class Robozzle {
     /**
      * move robozzle bot
      * @param action robozzle bot action
+     * @returns if robot is on unreachable area (the env is done)
      */
-    private _move(action: RobozzleAction) {
+    private _move(action: RobozzleAction): boolean {
         switch (action) {
             case RobozzleActions.forward:
                 this._forward();
@@ -193,6 +196,18 @@ export default class Robozzle {
                 this._rotate(1);
                 break;
         }
+
+        return this._isOnUnreachable();
+    }
+
+    /**
+     * Check if robot is on unreachable area (the env is done)
+     * @returns if robot is on unreachable area (the env is done)
+     */
+    private _isOnUnreachable() {
+        if (this.botState === null) return false;
+        const { x, y } = this.botState;
+        return false === this.tiles[x][y].reachable;
     }
 
     /**
