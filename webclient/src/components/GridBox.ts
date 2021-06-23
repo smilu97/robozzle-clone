@@ -1,16 +1,35 @@
-import { gridSize } from '../constant';
+import { gridColors, gridSize } from '../constant';
 import Component from './component';
+import Robozzle, { Tile } from '../env';
+export default class GridBox extends Component<Tile> {
+    env!: Robozzle;
+    x: number = -1;
+    y: number = -1;
 
-export default class GridBox extends Component {
-    constructor() {
-        super();
+    render(): string {
+        const color = gridColors[this.state?.color || 0]
 
-        let shadowRoot = this.attachShadow({ mode: 'open' });
-        shadowRoot.innerHTML = `
+        if (color === undefined) {
+            console.warn('not enough grid colors');
+        }
+
+        let content = '';
+        let rotate = 0;
+
+        if (this.env) {
+            if (this.state?.star) content = 'S';
+            if (this.env.botState?.x === this.x && this.env.botState?.y === this.y)
+                content = 'B';
+            
+            rotate = [-90, 0, 90, 180][this.env.botState?.direction || 1];
+        }
+
+        return `
             <style>
                 :host {
                     --grid-size: ${gridSize};
-
+                    background: ${color};
+                    transform: rotate(${rotate}deg);
                     box-sizing: border-box;
                     width: var(--grid-size);
                     height: var(--grid-size);
@@ -22,6 +41,7 @@ export default class GridBox extends Component {
                     justify-content: center;
                 }
             </style>
+            ${content}
         `;
     }
 }

@@ -1,13 +1,13 @@
 {
   "name": "tutorial",
-  "starting": [0, 0, 1],
+  "starting": [4, 4, 1],
   "numColors": 3,
   "writableColors": [false, false, false],
   "tiles": [
-    [0, 0, 0, false],
-    [0, 1, 0, false],
-    [0, 2, 0, false],
-    [0, 3, 0, true]
+    [4, 4, 1, false],
+    [4, 5, 1, false],
+    [4, 6, 1, false],
+    [4, 7, 1, true]
   ],
   "memory": [3]
 }

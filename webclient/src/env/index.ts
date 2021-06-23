@@ -28,7 +28,7 @@ export interface RobozzleOption {
     height: number;
 }
 
-interface Tile {
+export interface Tile {
     color: RobozzleColor;
     star: boolean;
     reachable: boolean;
@@ -275,7 +275,7 @@ export default class Robozzle {
             const row: Tile[] = [];
             for (let y = 0; y < this.width; y += 1) {
                 row.push({
-                    color: 1,
+                    color: 0,
                     star: false,
                     reachable: false,
                 });

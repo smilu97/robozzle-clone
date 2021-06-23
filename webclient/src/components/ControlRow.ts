@@ -1,11 +1,8 @@
 import Component from "./component";
 
 export default class ControlRow extends Component {
-    constructor() {
-        super();
-
-        const shadowRoot = this.attachShadow({ mode: 'open' });
-        shadowRoot.innerHTML = `
+    render(): string {
+        return `
             <style>
                 :host {
                     display: flex;
