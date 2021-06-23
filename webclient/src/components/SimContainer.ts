@@ -1,11 +1,18 @@
-import { gridDim } from '../constant';
+import { gridSize } from '../constant';
+import Component from './component';
 
-export default class SimContainer extends HTMLElement {
-    shadowRoot!: ShadowRoot;
-
+export default class SimContainer extends Component {
     private simContainerDomRef: HTMLElement;
     private simBoxDomRef: HTMLElement;
     private stackContainerDomRef: HTMLElement;
+
+    get width(): number {
+        return Number(this.getAttribute('width') || 10);
+    }
+
+    get height(): number {
+        return Number(this.getAttribute('height') || 10);
+    }
 
     constructor() {
         super();
@@ -14,12 +21,10 @@ export default class SimContainer extends HTMLElement {
         shadowRoot.innerHTML = `
             <style>
                 :host {
-                    --grid-size: 40px;
-                    --grid-dim-width: 20;
-                    --grid-dim-height: 20;
-                }
+                    --grid-size: ${gridSize};
+                    --grid-dim-width: ${this.width};
+                    --grid-dim-height: ${this.height};
 
-                #sim-container {
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -42,11 +47,10 @@ export default class SimContainer extends HTMLElement {
                     border-style: solid;
                 }
             </style>
-            <div id="sim-container">
-                <div id="sim-box"></div>
-                <div id="stack-container"></div>
-            </div>
+            <div id="sim-box"></div>
+            <div id="stack-container"></div>
         `;
+        this.shadowRoot = shadowRoot;
 
         this.simContainerDomRef = shadowRoot.getElementById('sim-container')!;
         this.simBoxDomRef = shadowRoot.getElementById('sim-box')!;
@@ -58,15 +62,14 @@ export default class SimContainer extends HTMLElement {
     }
 
     private setup() {
-        const gridNum = gridDim[0] * gridDim[1];
+        const gridNum = this.width * this.height;
         for (let i = 0; i < gridNum; i += 1) {
             this.appendGrid();
         }
     }
 
     private appendGrid() {
-        const el = document.createElement('div');
-        el.className  = 'grid';
+        const el = document.createElement('grid-box');
         this.simBoxDomRef?.appendChild(el);
     }
 }

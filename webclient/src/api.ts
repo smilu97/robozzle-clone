@@ -7,9 +7,9 @@ export async function myFetchGet(path: string) {
 }
 
 export async function fetchPuzzleList() {
-    return myFetchGet('/puzzles');   
+    return myFetchGet('puzzles');   
 }
 
 export async function fetchPuzzle(puzzleName: string) {
-    return myFetchGet(`/puzzle/${puzzleName}`);
+    return myFetchGet(`puzzle/${puzzleName}`);
 }

@@ -1,3 +1,4 @@
+import { gridDim } from "../constant";
 import { buildFunction, RobozzleFunction } from "./fn";
 import {
     buildAction,
@@ -65,20 +66,15 @@ export default class Robozzle {
     writableColors: boolean[] = [];
     stepped = false;
     done = false;
+    width: number = gridDim[0];
+    height: number = gridDim[1];
 
     tiles: Tile[][];
-    width: number;
-    height: number;
     botState: BotState | null;
 
-    constructor(option: RobozzleOption) {
-        const { width, height } = option;
-
-        this.width = width;
-        this.height = height;
+    constructor() {
         this.tiles = [];
-
-        this._initTiles(width, height);
+        this._initTiles();
         this.botState = null;
     }
 
@@ -272,14 +268,12 @@ export default class Robozzle {
      * @param width the width of tile
      * @param height the height of tile
      */
-    private _initTiles(width: number, height: number) {
-        this.width = width;
-        this.height = height;
+    private _initTiles() {
         this.tiles = [];
 
-        for (let x = 0; x < height; x += 1) {
+        for (let x = 0; x < this.height; x += 1) {
             const row: Tile[] = [];
-            for (let y = 0; y < width; y += 1) {
+            for (let y = 0; y < this.width; y += 1) {
                 row.push({
                     color: 1,
                     star: false,

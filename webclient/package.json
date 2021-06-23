@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "parcel src/render/index.html",
+    "start": "parcel src/index.html",
     "clean": "rm -rf .cache/ dist/"
   },
   "devDependencies": {
