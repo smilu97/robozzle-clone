@@ -1,4 +1,5 @@
 import RobozzleClient from './render';
+import './components/SimContainer';
 
 function run() {
     const simBox        = document.getElementById('sim-box')        as (HTMLDivElement | null);
@@ -29,4 +30,18 @@ function run() {
     const client = new RobozzleClient(elements);
 }
 
-run();
+const root = document.getElementById('root') as HTMLElement;
+
+function App() {
+    customElements.whenDefined('sim-container')
+      .then(() => {
+          const simEl = document.createElement('sim-container');
+          root.appendChild(simEl);
+      });
+}
+
+(() => {
+    window.onload = () => {
+        App();
+    }
+})();
