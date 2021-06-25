@@ -1,5 +1,5 @@
 export default class Stack<T> {
-    private head: StackNode<T> | null = null;
+    protected head: StackNode<T> | null = null;
     length: number = 0;
 
     /**
@@ -31,6 +31,21 @@ export default class Stack<T> {
      */
     top(): T | null {
         return this.head?.item || null;
+    }
+
+    /**
+     * Build list of highest N elements of stack
+     * @param n 
+     * @returns list of N elements
+     */
+    firstN(n: number): T[] {
+        const res: T[] = [];
+        let cur = this.head;
+        while (cur !== null && res.length < n) {
+            res.push(cur.item);
+            cur = cur.next;
+        }
+        return res;
     }
 
     /**
