@@ -71,22 +71,29 @@ export default class Simulation extends Component {
                 }
             </style>
             <div id="sim-box"></div>
-            <op-stack id="op-stack"></op-stack>
         `;
     }
 
-    connectedCallback() {
-        this._setup();
+    connectedCallback(): void {
+        this._setupRows();
+        this._setupOpStack();
         this.update();
     }
 
-    update() {
+    update(): void {
         this._iterateBoxes().forEach(([box, x, y]) => {
             box.setState(this.env.tiles[x][y]);
         });
     }
 
-    private _setup() {
+    private _setupOpStack(): void {
+        const stack = document.createElement('op-stack') as OpStack;
+        stack.env = this.env;
+        this.shadowRoot.appendChild(stack);
+        this.opStackDomRef = stack;
+    }
+
+    private _setupRows(): void {
         const rows = [];
         for (let x = 0; x < this.height; x += 1) {
             const row = [];
