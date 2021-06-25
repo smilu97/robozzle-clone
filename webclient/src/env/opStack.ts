@@ -44,6 +44,22 @@ export default class OpStack extends Stack<RobozzleStackItem> {
     }
 
     /**
+     * Count the number of nodes which has ids greater than `lastId`
+     * @param lastId
+     * @returns the number of new nodes
+     */
+    countNewNodes(lastId: number): number {
+        let count = 0;
+        let cur = this.head;
+        while (cur !== null) {
+            if (cur.item.id <= lastId) break;
+            count += 1;
+            cur = cur.next;
+        }
+        return count;
+    }
+
+    /**
      * Increment lastId, and return it
      * @returns next id for stack item
      */
