@@ -1,5 +1,5 @@
 import { gridDim } from "../constant";
-import { RobozzleEnvAction } from "./action";
+import { buildClearAction, RobozzleEnvAction } from "./action";
 import { buildFunction, RobozzleFunction } from "./fn";
 import {
     buildAction,
@@ -132,11 +132,27 @@ export default class Robozzle {
                 const { content } = action;
                 this._writeAction(content);
                 break;
+            case 'ACTION/CLEAR':
+                this.clear();
+                break;
         }
 
         this.stepListeners.forEach((el) => el(action, this));
 
+        if (this.done)
+            this.step(buildClearAction());
+
         return this.done;
+    }
+
+    /**
+     * Clear environment into first state
+     */
+    clear(): void {
+        if (this.puzzle === null)
+            throw Error('Clear occured before puzzle is setup');
+            
+        this.reset(this.puzzle);
     }
 
     /**

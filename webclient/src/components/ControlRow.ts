@@ -1,6 +1,6 @@
-import Component from "./component";
+import RobozzleComponent from "./RobozzleComponent";
 
-export default class ControlRow extends Component {
+export default class ControlRow extends RobozzleComponent {
     render(): string {
         return `
             <style>

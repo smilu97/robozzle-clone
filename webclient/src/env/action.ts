@@ -27,7 +27,25 @@ type StepAction = {
     type: 'ACTION/STEP', 
 };
 
-export type RobozzleEnvAction = WriteAction | ColorAction | SelectAction | StepAction;
+type ClearAction = {
+    type: 'ACTION/CLEAR',
+};
+
+export const RobozzleEnvActions: {
+    write: 'ACTION/WRITE',
+    color: 'ACTION/COLOR',
+    select: 'ACTION/SELECT',
+    step: 'ACTION/STEP',
+    clear: 'ACTION/CLEAR',
+} = {
+    write: 'ACTION/WRITE',
+    color: 'ACTION/COLOR',
+    select: 'ACTION/SELECT',
+    step: 'ACTION/STEP',
+    clear: 'ACTION/CLEAR',
+};
+
+export type RobozzleEnvAction = WriteAction | ColorAction | SelectAction | StepAction | ClearAction;
 
 export function buildWriteAction(content: WriteActionContent): WriteAction {
     return {
@@ -53,5 +71,11 @@ export function buildSelectAction(fnIndex: number, index: number): SelectAction 
 export function buildStepAction(): StepAction {
     return {
         type: 'ACTION/STEP',
+    };
+}
+
+export function buildClearAction(): ClearAction {
+    return {
+        type: 'ACTION/CLEAR',
     };
 }

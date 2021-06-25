@@ -1,13 +1,15 @@
 import { gridColors, gridSize } from '../constant';
-import Component from './component';
-import Robozzle, { Tile } from '../env';
-export default class GridBox extends Component<Tile> {
-    env!: Robozzle;
+import { Tile } from '../env';
+import RobozzleComponent from './RobozzleComponent';
+export default class GridBox extends RobozzleComponent<Tile> {
     x: number = -1;
     y: number = -1;
 
     render(): string {
-        const color = gridColors[this.state?.color || 0]
+        if (this.env === undefined) return ''; 
+
+        const { color: colorIndex, reachable, star } = this.env.tiles[this.x][this.y];
+        const color = gridColors[colorIndex]
 
         if (color === undefined) {
             console.warn('not enough grid colors');
@@ -16,13 +18,11 @@ export default class GridBox extends Component<Tile> {
         let content = '';
         let rotate = 0;
 
-        if (this.env) {
-            if (this.state?.star) content = 'S';
-            if (this.env.botState?.x === this.x && this.env.botState?.y === this.y)
-                content = 'B';
-            
-            rotate = [-90, 0, 90, 180][this.env.botState?.direction || 1];
-        }
+        if (star) content = 'S';
+        if (this.env.botState?.x === this.x && this.env.botState?.y === this.y)
+            content = 'B';
+        
+        rotate = [-90, 0, 90, 180][this.env.botState?.direction || 1];
 
         return `
             <style>

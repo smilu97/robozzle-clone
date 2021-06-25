@@ -1,11 +1,10 @@
-import Robozzle from "../env";
 import { buildStepAction, RobozzleEnvAction } from "../env/action";
-import { RobozzleAction, RobozzleOperation, RobozzleOpTypes } from "../env/op";
+import { RobozzleOperation } from "../env/op";
 import { ROBOZZLE_ACTION_FORWARD, ROBOZZLE_ACTION_LEFT, ROBOZZLE_ACTION_RIGHT } from '../env/op';
-import Component from "./component";
+import RobozzleComponent from "./RobozzleComponent";
 
-export default class OpStack extends Component {
-    env: Robozzle | null = null;
+export default class OpStack extends RobozzleComponent {
+    debugClassName = 'OpStack';
 
     opRowDomRef: HTMLDivElement;
     // play button is toggled between 'play' and 'pause' state by clicking
@@ -28,13 +27,6 @@ export default class OpStack extends Component {
         
         this.playButtonDomRef.addEventListener('click', this.onClickPlayPause.bind(this));
         this.stepButtonDomRef.addEventListener('click', this.onClickStep.bind(this));
-    }
-
-    connectedCallback(): void {
-        if (this.env === null)
-            throw Error('env is not present in OpStack');
-
-        this.env.addStepListener(this.onEnvStep.bind(this));
     }
 
     render(): string {
@@ -170,6 +162,8 @@ export default class OpStack extends Component {
             throw Error('Step is called when env is not setup');
         
         const action = buildStepAction();
-        this.env.step(action);
+        if (this.env.step(action)) {
+            this.onClickPause();
+        }
     }
 }

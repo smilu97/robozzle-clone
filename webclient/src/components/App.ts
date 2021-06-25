@@ -98,7 +98,7 @@ export default class App extends Component {
      */
     private _buildControlRow(): ControlRow {
         const row = document.createElement('control-row') as ControlRow;
-        
+        row.env = this.env;
         return row;
     }
 

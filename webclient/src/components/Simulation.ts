@@ -1,16 +1,13 @@
 import { gridSize } from '../constant';
-import Robozzle from '../env';
 import OpStack from './OpStack';
-import Component from './component';
 import GridBox from './GridBox';
+import RobozzleComponent from './RobozzleComponent';
 
-export default class Simulation extends Component {
-    env!: Robozzle;
+export default class Simulation extends RobozzleComponent {
+    debugClassName = 'Simulation';
 
     private simBoxDomRef: HTMLDivElement;
     private opStackDomRef: OpStack;
-
-    private rows: GridBox[][] = [];
 
     _width: number = 0;
     _height: number = 0;
@@ -75,16 +72,13 @@ export default class Simulation extends Component {
     }
 
     connectedCallback(): void {
+        super.connectedCallback();
+
         this._setupRows();
         this._setupOpStack();
-        this.update();
     }
 
-    update(): void {
-        this._iterateBoxes().forEach(([box, x, y]) => {
-            box.setState(this.env.tiles[x][y]);
-        });
-    }
+    update(): void {}
 
     private _setupOpStack(): void {
         const stack = document.createElement('op-stack') as OpStack;
@@ -94,35 +88,16 @@ export default class Simulation extends Component {
     }
 
     private _setupRows(): void {
-        const rows = [];
         for (let x = 0; x < this.height; x += 1) {
-            const row = [];
             for (let y = 0; y < this.width; y += 1) {
-                const box = this._appendGrid(x, y);
-                row.push(box);
+                const box = this._buildGridBox(x, y);
+                this.simBoxDomRef.appendChild(box);
             }
-            rows.push(row);
         }
-        this.rows = rows;
     }
 
-    private _iterateBoxes(): [GridBox, number, number][] {
-        const its: [GridBox, number, number][] = [];
-        let x = 0;
-        for (let row of this.rows) {
-            let y = 0;
-            for (let box of row) {
-                its.push([box, x, y]);
-                y += 1;
-            }
-            x += 1;
-        }
-        return its;
-    }
-
-    private _appendGrid(x: number, y: number): GridBox {
+    private _buildGridBox(x: number, y: number): GridBox {
         const el = document.createElement('grid-box') as GridBox;
-        this.simBoxDomRef.appendChild(el);
         el.env = this.env;
         el.x = x;
         el.y = y;
