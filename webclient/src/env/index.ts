@@ -1,4 +1,5 @@
 import { gridDim } from "../constant";
+import { RobozzleEnvAction } from "./action";
 import { buildFunction, RobozzleFunction } from "./fn";
 import {
     buildAction,
@@ -34,28 +35,7 @@ export interface Tile {
     reachable: boolean;
 }
 
-type WriteAction = {
-    type: 'ACTION/WRITE',
-    content: RobozzleActionOperation | RobozzleWriteOperation | RobozzleCallOperation;
-}
-
-type ColorAction = {
-    type: 'ACTION/COLOR',
-    color: RobozzleColor,
-};
-
-type SelectAction = {
-    type: 'ACTION/SELECT', 
-    fnIndex: number,
-    index: number,
-};
-
-type StepAction = {
-    type: 'ACTION/STEP', 
-};
-
-type Action = WriteAction | ColorAction | SelectAction | StepAction;
-
+type StepListener = (action: RobozzleEnvAction, env: Robozzle) => void;
 export default class Robozzle {
     opStack = new OpStack();
     fnLengths: number[] = [];
@@ -71,6 +51,8 @@ export default class Robozzle {
 
     tiles: Tile[][];
     botState: BotState | null;
+
+    stepListeners: StepListener[] = [];
 
     constructor() {
         this.tiles = [];
@@ -107,7 +89,7 @@ export default class Robozzle {
      * @param action user action
      * @returns if env is done
      */
-    step(action: Action): boolean {
+    step(action: RobozzleEnvAction): boolean {
         if (this.puzzle === null) {
             console.error('Robozzle: Attempted step() before reset');
             return true;
@@ -152,7 +134,27 @@ export default class Robozzle {
                 break;
         }
 
+        this.stepListeners.forEach((el) => el(action, this));
+
         return this.done;
+    }
+
+    /**
+     * Add step listener
+     * @param listener
+     */
+    addStepListener(listener: StepListener): void {
+        this.stepListeners.push(listener);
+    }
+
+    /**
+     * Remove step listener
+     * @param listener
+     */
+    removeStepListener(listener: StepListener): void {
+        const index = this.stepListeners.indexOf(listener);
+        if (index !== -1)
+            this.stepListeners.splice(index, 1);
     }
 
     /**
