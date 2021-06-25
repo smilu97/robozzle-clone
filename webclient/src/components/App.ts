@@ -26,15 +26,11 @@ export default class App extends Component {
         this._setup();
     }
 
+    /**
+     * Initiate setup processes
+     */
     private _setup(): void {
-        const puzzleName = this._getPuzzleName();
-
-        if (puzzleName === null) {
-            console.error('Invalid URL');
-            return;
-        }
-
-        fetchPuzzle(puzzleName).then((puzzle: PuzzleDescription) => {
+        App._fetchPuzzle((puzzle: PuzzleDescription) => {
             console.log('puzzle desc:', puzzle);
 
             this.puzzle = puzzle;
@@ -43,16 +39,20 @@ export default class App extends Component {
         });
     }
 
+    /**
+     * Setup robozzle environment
+     */
     private _setupEnvironment(): void {
-        if (this.puzzle === null) {
-            console.error('_setupEnvironment was called outside _setup');
-            return;
-        }
+        if (this.puzzle === null)
+            throw Error('_setupEnvironment was called outside _setup');
 
         this.env = new Robozzle();
         this.env.reset(this.puzzle);
     }
 
+    /**
+     * Build requried custom components, and append all into root
+     */
     private _setupChildren(): void {
         const sim = this._buildSim();
         const actionControl = this._buildControlRow();
@@ -75,45 +75,79 @@ export default class App extends Component {
         };
     }
 
+    /**
+     * Build robozzle-sim custom component
+     * @returns RobbozleSimulation
+     */
     private _buildSim(): Simulation {
-        this._calcWidthHeight();
+        const [width, height] = this._calcDimension();
+        this.width = width;
+        this.height = height;
 
         const sim = document.createElement('robozzle-sim') as Simulation;
         sim.env = this.env;
-        sim.width = this.width;
-        sim.height = this.height;
+        sim.width = width;
+        sim.height = height;
 
         return sim;
     }
 
+    /**
+     * Build control-row custom component
+     * @returns ControlRow
+     */
     private _buildControlRow(): ControlRow {
         const row = document.createElement('control-row') as ControlRow;
         
         return row;
     }
 
-    private _calcWidthHeight() {
+    /**
+     * Calculate appropriate puzzle dimension
+     * @return dimension for puzzle simulation
+     */
+    private _calcDimension(): [number, number] {
         if (this.puzzle === null)
-            return;
+            throw Error('_calcDimension was called before puzzle environment is setup');
 
         const { tiles } = this.puzzle;
-        this.width = Math.max(gridDim[0], tiles
+        const width = Math.max(gridDim[0], tiles
             .map((el) => el[1])
             .map((el) => Math.abs(el))
             .reduce((a, b) => Math.max(a, b)));
-        this.height = Math.max(gridDim[1], tiles
+        const height = Math.max(gridDim[1], tiles
             .map((el) => el[0])
             .map((el) => Math.abs(el))
             .reduce((a, b) => Math.max(a, b)));
+        
+        return [width, height];
     }
 
-    private _getPuzzleName() {
+    /**
+     * Fetch puzzle description from API server
+     */
+     private static _fetchPuzzle(cb: (pd: PuzzleDescription) => void): void {
+        const puzzleName = App._getPuzzleName();
+
+        if (puzzleName === null) {
+            console.error('Invalid URL');
+            return;
+        }
+
+        fetchPuzzle(puzzleName).then(cb);
+    }
+
+    /**
+     * Infer puzzle name from URL
+     * @return puzzle name
+     */
+    private static _getPuzzleName(): string {
         const tmp = document.URL.split('//')[1];
         const path = tmp.substr(tmp.indexOf('/'));
         
         const prefix = '/puzzle/';
         if (path.length <= prefix.length || path.substr(0, prefix.length) !== prefix)
-            return null;
+            throw Error("Inappropriate URL detected: URL should follow '/puzzle/{puzzleName}'");
 
         return path.substr(prefix.length);
     }
