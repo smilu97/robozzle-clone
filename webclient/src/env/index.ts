@@ -166,10 +166,10 @@ export default class Robozzle {
             this.stepped = true;
             const callee = this.functions[0];
             const call = buildCall(0, callee);
-            this.opStack.push(call);
+            this.opStack.pushOp(call);
         }
         
-        const op = this.opStack.pop();
+        const op = this.opStack.popOp();
         if (op === null) return true; // The stack is empty
         if (this.botState === null) return true; // The game is not reset
 

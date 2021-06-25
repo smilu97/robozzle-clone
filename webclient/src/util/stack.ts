@@ -1,11 +1,14 @@
 export default class Stack<T> {
-    head: StackNode<T> | null = null;
+    private head: StackNode<T> | null = null;
+    length: number = 0;
 
     /**
      * push item into the stack
      * @param item
      */
     push(item: T): void {
+        this.length += 1;
+
         const newNode = { item, next: this.head };
         this.head = newNode;
     }
@@ -15,6 +18,8 @@ export default class Stack<T> {
      * @returns the item on the top of this stack
      */
     pop(): T | null {
+        this.length -= 1;
+
         const result = this.head;
         this.head = this.head?.next || null;
         return result?.item || null;

@@ -7,15 +7,23 @@ import {
 } from './op';
 import Stack from '../util/stack';
 
-export default class OpStack {
-    private stack = new Stack<RobozzleOperation>();
+export interface RobozzleStackItem {
+    id: number;
+    op: RobozzleOperation;
+}
+
+export default class OpStack extends Stack<RobozzleStackItem> {
+    private lastId: number = 0;
 
     /**
      * push item into stack
      * @param op operation
      */
-    push(op: RobozzleOperation): void {
-        this.stack.push(op);
+    pushOp(op: RobozzleOperation): void {
+        super.push({
+            id: this._getNextId(),
+            op,
+        });
     }
 
     /**
@@ -24,23 +32,24 @@ export default class OpStack {
      * and function call operation is automatically processed either.
      * @returns operation which is not call, or empty, but action, or write
      */
-    pop(): RobozzleActionOperation | RobozzleWriteOperation | null {
+    popOp(): RobozzleActionOperation | RobozzleWriteOperation | null {
         this._resolveCalls();
 
-        if (this.stack.isEmpty())
+        if (this.isEmpty())
             return null;
         
-        const top = this.stack.top();
+        const top = this.top();
 
         return top as RobozzleActionOperation | RobozzleWriteOperation | null;
     }
 
     /**
-     * Check whether the stack is empty
-     * @returns if stack is empty
+     * Increment lastId, and return it
+     * @returns next id for stack item
      */
-    isEmpty() {
-        return this.stack.isEmpty();
+    private _getNextId(): number {
+        this.lastId += 1;
+        return this.lastId;
     }
 
     /**
@@ -58,7 +67,7 @@ export default class OpStack {
             callee.seq
                 .filter((el) => el.type !== RobozzleOpTypes.empty)
                 .reverse()
-                .forEach(this.stack.push);
+                .forEach(this.pushOp.bind(this));
         }
     }
 
@@ -69,14 +78,14 @@ export default class OpStack {
      * @returns callee | null
      */
     private _getCalleeOnTop() {
-        if (this.stack.isEmpty()) return null;
+        if (this.isEmpty()) return null;
 
-        const top = this.stack.top();
+        const top = this.top();
 
         if (top === null) return null;
-        if (top.type !== RobozzleOpTypes.call) return null;
+        if (top.op.type !== RobozzleOpTypes.call) return null;
         
-        const { callee } = (top as RobozzleCallOperation);
+        const { callee } = (top.op as RobozzleCallOperation);
 
         return callee;
     }
