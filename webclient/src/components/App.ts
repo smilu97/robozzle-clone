@@ -3,21 +3,15 @@ import { gridDim } from "../constant";
 import Robozzle from "../env";
 import { PuzzleDescription } from "../env/puzzle";
 import Component from "./component";
-import ControlRow from "./ControlRow";
+import FunctionControl from "./FunctionControl";
 import Simulation from "./Simulation";
 
 export default class App extends Component {
     env!: Robozzle;
 
     private puzzle: PuzzleDescription | null = null;
-
-    private domRefs: {
-        sim: Simulation,
-        actionControl: ControlRow,
-        fnControl: ControlRow,
-        writeControl: ControlRow,
-        colorControl: ControlRow,
-    } | null = null;
+    private simRef!: Simulation;
+    private fnControlRef!: FunctionControl;
 
     width: number = 0;
     height: number = 0;
@@ -54,25 +48,11 @@ export default class App extends Component {
      * Build requried custom components, and append all into root
      */
     private _setupChildren(): void {
-        const sim = this._buildSim();
-        const actionControl = this._buildControlRow();
-        const fnControl = this._buildControlRow();
-        const writeControl = this._buildControlRow();
-        const colorControl = this._buildControlRow();
+        this.simRef = this._buildSim();
+        this.fnControlRef = this._buildFnControl();
 
-        this.shadowRoot.appendChild(sim);
-        this.shadowRoot.appendChild(actionControl);
-        this.shadowRoot.appendChild(fnControl);
-        this.shadowRoot.appendChild(writeControl);
-        this.shadowRoot.appendChild(colorControl);
-
-        this.domRefs = {
-            sim,
-            actionControl,
-            fnControl,
-            writeControl,
-            colorControl,
-        };
+        this.shadowRoot.appendChild(this.simRef);
+        this.shadowRoot.appendChild(this.fnControlRef);
     }
 
     /**
@@ -91,15 +71,11 @@ export default class App extends Component {
 
         return sim;
     }
-
-    /**
-     * Build control-row custom component
-     * @returns ControlRow
-     */
-    private _buildControlRow(): ControlRow {
-        const row = document.createElement('control-row') as ControlRow;
-        row.env = this.env;
-        return row;
+    
+    private _buildFnControl(): FunctionControl {
+        const control = document.createElement('fn-control') as FunctionControl;
+        control.env = this.env;
+        return control;
     }
 
     /**

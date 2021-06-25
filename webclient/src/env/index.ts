@@ -35,7 +35,7 @@ export interface Tile {
     reachable: boolean;
 }
 
-type StepListener = (action: RobozzleEnvAction, env: Robozzle) => void;
+export type StepListener = (action: RobozzleEnvAction, env: Robozzle) => void;
 export default class Robozzle {
     opStack = new OpStack();
     fnLengths: number[] = [];
@@ -90,9 +90,16 @@ export default class Robozzle {
      * @returns if env is done
      */
     step(action: RobozzleEnvAction): boolean {
+        console.log('step:', action);
+
         if (this.puzzle === null) {
             console.error('Robozzle: Attempted step() before reset');
             return true;
+        }
+
+        if (action.type === 'ACTION/CLEAR') {
+            this.clear();
+            return this.done;
         }
 
         if (this.done)
@@ -132,15 +139,14 @@ export default class Robozzle {
                 const { content } = action;
                 this._writeAction(content);
                 break;
-            case 'ACTION/CLEAR':
-                this.clear();
-                break;
         }
 
         this.stepListeners.forEach((el) => el(action, this));
 
-        if (this.done)
+        if (this.done) {
             this.step(buildClearAction());
+            return true;
+        }
 
         return this.done;
     }
@@ -151,7 +157,7 @@ export default class Robozzle {
     clear(): void {
         if (this.puzzle === null)
             throw Error('Clear occured before puzzle is setup');
-            
+
         this.reset(this.puzzle);
     }
 
@@ -186,8 +192,13 @@ export default class Robozzle {
         }
         
         const op = this.opStack.popOp();
-        if (op === null) return true; // The stack is empty
+        if (op === null) return this.opStack.empty;
         if (this.botState === null) return true; // The game is not reset
+
+        if (op.condition.color > 0) {
+            if (op.condition.color !== this._currentTileColor())
+                return false;
+        }
 
         switch (op.type) {
             case RobozzleOpTypes.action:
@@ -202,6 +213,15 @@ export default class Robozzle {
         }
 
         return false;
+    }
+
+    /**
+     * @returns color of current tile color
+     */
+    _currentTileColor(): number {
+        if (this.botState === null) return 0;
+        const {x, y} = this.botState;
+        return this.tiles[x][y].color;
     }
 
     /**
@@ -324,7 +344,7 @@ export default class Robozzle {
         this.functions = [];
         let index = 1;
         for (const n of memory) {
-            const fn = buildFunction('F' + String(index), n);
+            const fn = buildFunction('F' + String(index), index - 1, n);
             this.functions.push(fn);
             index += 1;
         }

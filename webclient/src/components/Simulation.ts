@@ -46,12 +46,14 @@ export default class Simulation extends RobozzleComponent {
                     --grid-dim-height: ${this.height};
 
                     display: flex;
+                    flex-direction: column;
                     align-items: center;
                     justify-content: center;
                 }
 
                 #sim-box {
                     background: #7f00ff;
+                    flex-grow: 1;
                     width: calc(var(--grid-size) * var(--grid-dim-width));
                     height: calc(var(--grid-size) * var(--grid-dim-height));
                     display: flex;
@@ -75,8 +77,6 @@ export default class Simulation extends RobozzleComponent {
         this._setupRows();
         this._setupOpStack();
     }
-
-    update(): void {}
 
     private _setupOpStack(): void {
         const stack = document.createElement('op-stack') as OpStack;

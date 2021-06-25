@@ -25,11 +25,9 @@ export default class Component<S = null> extends HTMLElement {
     }
 
     /**
-     * Defalt update behavior
+     * Update component
      */
-    update(): void {
-        this.shadowRoot.innerHTML = this.render();
-    }
+    update(): void {}
 
     /**
      * Placeholder

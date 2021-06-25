@@ -1,6 +1,7 @@
-import { emptyOp, RobozzleOperation } from "./op";
+import { buildEmpty, emptyOp, RobozzleOperation } from "./op";
 
 export interface RobozzleFunction {
+    index: number;
     name: string;
     seq: RobozzleOperation[];
 }
@@ -10,9 +11,9 @@ export interface RobozzleFunction {
  * @param length the maximum length of function
  * @returns robozzle function
  */
-export function buildFunction(name: string, length: number): RobozzleFunction {
+export function buildFunction(name: string, index: number, length: number): RobozzleFunction {
     const seq = Array(length);
     for (let i = 0; i < length; i += 1)
-        seq[i] = emptyOp;
-    return { name, seq };
+        seq[i] = buildEmpty();
+    return { index, name, seq };
 }

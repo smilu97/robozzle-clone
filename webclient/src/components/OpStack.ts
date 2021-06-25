@@ -1,6 +1,8 @@
+import { fnItemSize, gridSize } from "../constant";
 import { buildStepAction, RobozzleEnvAction } from "../env/action";
 import { RobozzleOperation } from "../env/op";
 import { ROBOZZLE_ACTION_FORWARD, ROBOZZLE_ACTION_LEFT, ROBOZZLE_ACTION_RIGHT } from '../env/op';
+import FucntionItem from "./FunctionItem";
 import RobozzleComponent from "./RobozzleComponent";
 
 export default class OpStack extends RobozzleComponent {
@@ -39,6 +41,7 @@ export default class OpStack extends RobozzleComponent {
                 }
                 #op-row {
                     display: flex;
+                    width: calc(var(--grid-dim-width) * ${gridSize} - 2 * ${fnItemSize});
                     flex-direction: row;
                     align-items: center;
                     overflow: hidden;
@@ -47,6 +50,10 @@ export default class OpStack extends RobozzleComponent {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
+                }
+                .control-item {
+                    width: ${fnItemSize};
+                    height: ${fnItemSize};
                 }
             </style>
             <div id="op-row"></div>
@@ -57,32 +64,8 @@ export default class OpStack extends RobozzleComponent {
         `;
     }
 
-    static renderOp(op: RobozzleOperation): HTMLElement {
-        const ref = document.createElement('div');
-        ref.className = 'op-item';
-        ref.innerHTML = OpStack.renderOpInner(op);
-        return ref;
-    }
-
-    static renderOpInner(op: RobozzleOperation): string {
-        switch (op.type) {
-            case 'ROBOZZLE/OPTYPE/EMPTY':
-                return 'E';
-            case 'ROBOZZLE/OPTYPE/ACTION':
-                if (op.action === ROBOZZLE_ACTION_FORWARD)
-                    return 'F';
-                if (op.action === ROBOZZLE_ACTION_LEFT)
-                    return 'L';
-                if (op.action === ROBOZZLE_ACTION_RIGHT)
-                    return 'R';
-                break;
-            case 'ROBOZZLE/OPTYPE/CALL':
-                return op.callee.name;
-            case 'ROBOZZLE/OPTYPE/WRITE':
-                return 'W';
-        }
-
-        return 'U';
+    connectedEnvCallback(): void {
+        this.opRowDomRef.style.setProperty('--grid-dim-width', String(this.env.width));
     }
 
     /**
@@ -113,9 +96,16 @@ export default class OpStack extends RobozzleComponent {
 
         stack.firstN(numNewOps)
             .map((el) => el.op)
-            .map(OpStack.renderOp.bind(this))
+            .map(this._buildFnItem.bind(this))
             .reverse()
             .forEach((el) => rowRef.insertBefore(el, rowRef.firstChild));
+    }
+
+    private _buildFnItem(op: RobozzleOperation): HTMLElement {
+        const ref = document.createElement('fn-item') as FucntionItem;
+        ref.env = this.env;
+        ref.op = op;
+        return ref;
     }
 
     /**

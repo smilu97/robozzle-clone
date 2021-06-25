@@ -1,5 +1,6 @@
 import { gridColors, gridSize } from '../constant';
 import { Tile } from '../env';
+import { RobozzleEnvAction, RobozzleEnvActions } from '../env/action';
 import RobozzleComponent from './RobozzleComponent';
 export default class GridBox extends RobozzleComponent<Tile> {
     x: number = -1;
@@ -22,7 +23,8 @@ export default class GridBox extends RobozzleComponent<Tile> {
         if (this.env.botState?.x === this.x && this.env.botState?.y === this.y)
             content = 'B';
         
-        rotate = [-90, 0, 90, 180][this.env.botState?.direction || 1];
+        if (content === 'B')
+            rotate = [-90, 0, 90, 180][this.env.botState!.direction];
 
         return `
             <style>
@@ -43,5 +45,16 @@ export default class GridBox extends RobozzleComponent<Tile> {
             </style>
             ${content}
         `;
+    }
+
+    update() {
+        this.shadowRoot.innerHTML = this.render();
+    }
+
+    onEnvStep(action: RobozzleEnvAction): void {
+        if (action.type === RobozzleEnvActions.clear
+         || action.type === RobozzleEnvActions.step) {
+          this.update();
+        }
     }
 }

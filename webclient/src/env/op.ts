@@ -118,6 +118,17 @@ export function buildWrite(color: RobozzleColor, writeColor: RobozzleColor): Rob
 }
 
 /**
+ * Build robozzle empty operation
+ * @returns robozzle empty operation
+ */
+export function buildEmpty(): RobozzleEmptyOperation {
+    return {
+        type: ROBOZZLE_OPTYPE_EMPTY,
+        condition: { color: 0 },
+    };
+}
+
+/**
  * Pre-defined empty operation
  */
 export const emptyOp: RobozzleOperation = {
