@@ -35,7 +35,7 @@ export default class OpStack extends Stack<RobozzleStackItem> {
     popOp(): RobozzleActionOperation | RobozzleWriteOperation | null {
         this._resolveCalls();
 
-        if (this.isEmpty())
+        if (this.empty)
             return null;
         
         const top = this.top();
@@ -78,7 +78,7 @@ export default class OpStack extends Stack<RobozzleStackItem> {
      * @returns callee | null
      */
     private _getCalleeOnTop() {
-        if (this.isEmpty()) return null;
+        if (this.empty) return null;
 
         const top = this.top();
 

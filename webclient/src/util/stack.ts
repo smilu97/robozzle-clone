@@ -37,7 +37,7 @@ export default class Stack<T> {
      * check if this stack is empty
      * @returns if this stack is empty
      */
-    isEmpty(): boolean {
+    get empty(): boolean {
         return this.head === null;
     }
 }
