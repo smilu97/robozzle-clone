@@ -306,9 +306,11 @@ export default class Robozzle {
      */
     private _resetFunctions(memory: number[]) {
         this.functions = [];
+        let index = 1;
         for (const n of memory) {
-            const fn = buildFunction(n);
+            const fn = buildFunction('F' + String(index), n);
             this.functions.push(fn);
+            index += 1;
         }
     }
 }

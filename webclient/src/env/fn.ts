@@ -1,6 +1,7 @@
 import { emptyOp, RobozzleOperation } from "./op";
 
 export interface RobozzleFunction {
+    name: string;
     seq: RobozzleOperation[];
 }
 
@@ -9,9 +10,9 @@ export interface RobozzleFunction {
  * @param length the maximum length of function
  * @returns robozzle function
  */
-export function buildFunction(length: number): RobozzleFunction {
+export function buildFunction(name: string, length: number): RobozzleFunction {
     const seq = Array(length);
     for (let i = 0; i < length; i += 1)
         seq[i] = emptyOp;
-    return { seq };
+    return { name, seq };
 }
