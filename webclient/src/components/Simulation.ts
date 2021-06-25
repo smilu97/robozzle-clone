@@ -71,9 +71,7 @@ export default class Simulation extends RobozzleComponent {
         `;
     }
 
-    connectedCallback(): void {
-        super.connectedCallback();
-
+    connectedEnvCallback(): void {
         this._setupRows();
         this._setupOpStack();
     }

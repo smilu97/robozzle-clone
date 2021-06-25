@@ -12,7 +12,10 @@ export default class RobozzleComponent<T = null> extends Component<T> {
         
         this.env.addStepListener(this.onEnvStep.bind(this));
         this.update();
+        this.connectedEnvCallback();
     }
+
+    connectedEnvCallback(): void {}
 
     onEnvStep(action: RobozzleEnvAction): void {}
 }
