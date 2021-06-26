@@ -8,7 +8,9 @@ Simple HTTP API server application for serving puzzle list, puzzle data, etc...
 
 ## Client
 
-Web Application?
+### Web Application
 
-Pygame-based Python Application?
+![web-client-screenshot](./static/screenshot.png)
+
+TODO: Pygame-based Python Application
 
