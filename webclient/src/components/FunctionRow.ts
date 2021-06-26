@@ -25,7 +25,7 @@ export default class FunctionRow extends RobozzleComponent {
                     margin: 0;
                     padding: 0;
                     display: flex;
-                    border: 0;
+                    border: 1px 0 0 1px solid #333;
                 }
             </style>
         `;
