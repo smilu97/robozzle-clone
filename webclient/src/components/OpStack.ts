@@ -15,7 +15,7 @@ export default class OpStack extends RobozzleComponent {
 
     playing: boolean = false;
     intervalId: number = -1;
-    speed: number = 500; // ms
+    speed: number = 200; // ms
 
     lastOpId: number = -1;
     lastStackLength: number = 0;
