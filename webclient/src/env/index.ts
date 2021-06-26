@@ -44,6 +44,8 @@ export default class Robozzle {
     cursor: [number, number] | null = null;
     numColors: number = 0;
     writableColors: boolean[] = [];
+
+    numStarAlive: number = 0;
     stepped = false;
     done = false;
     width: number = gridDim[0];
@@ -242,7 +244,31 @@ export default class Robozzle {
                 break;
         }
 
+        if (this._checkAllStarsEaten())
+            return true;
+
         return this._isOnUnreachable();
+    }
+
+    /**
+     * Check if bot has eaten all stars.
+     * @return if all stars are eaten
+     */
+    private _checkAllStarsEaten(): boolean {
+        if (this.botState === null)
+            return false;
+        
+        const { x, y } = this.botState;
+        const tile = this.tiles[x][y];
+        if (tile.star) {
+            tile.star = false;
+            this.numStarAlive -= 1;
+            if (this.numStarAlive <= 0) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
@@ -327,12 +353,14 @@ export default class Robozzle {
      * @param tiles descriptions of reachable tiles which are fetched from API server
      */
     private _resetTiles(tiles: [number, number, number, boolean][]) {
+        this.numStarAlive = 0;
         for (const desc of tiles) {
             const [x, y, color, hasStar] = desc;
             const tile = this.tiles[x][y];
             tile.color = color;
             tile.star = hasStar;
             tile.reachable = true;
+            if (hasStar) this.numStarAlive += 1;
         }
     }
 
