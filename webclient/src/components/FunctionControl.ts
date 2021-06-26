@@ -2,6 +2,7 @@ import { RobozzleFunction } from "../env/fn";
 import ActionSelector from "./ActionSelector";
 import ColorSelector from "./ColorSelector";
 import FunctionRow from "./FunctionRow";
+import FunctionSelector from "./FunctionSelector";
 import RobozzleComponent from "./RobozzleComponent";
 
 export default class FunctionControl extends RobozzleComponent {
@@ -13,6 +14,7 @@ export default class FunctionControl extends RobozzleComponent {
     fnRowRefs: FunctionRow[] = [];
     actionSelectorRef!: ActionSelector;
     colorSelectorRef!: ColorSelector;
+    fnSelectorRef!: FunctionSelector;
 
     constructor() {
         super();
@@ -47,9 +49,11 @@ export default class FunctionControl extends RobozzleComponent {
 
     private _setupControls(): void {
         this.actionSelectorRef = this._buildActionSelector();
-        this.colorSelectorRef = this._buildColorSelector(); 
+        this.fnSelectorRef = this._buildFnSelector();
+        this.colorSelectorRef = this._buildColorSelector();
 
         this.controlsRef.appendChild(this.actionSelectorRef);
+        this.controlsRef.appendChild(this.fnSelectorRef);
         this.controlsRef.appendChild(this.colorSelectorRef);
     }
 
@@ -69,6 +73,16 @@ export default class FunctionControl extends RobozzleComponent {
      */
      private _buildColorSelector(): ColorSelector {
         const ref = document.createElement('color-selector') as ColorSelector;
+        ref.env = this.env;
+        return ref;
+    }
+
+    /**
+     * Build fn-selector
+     * @returns FunctionSelector
+     */
+     private _buildFnSelector(): FunctionSelector {
+        const ref = document.createElement('fn-selector') as FunctionSelector;
         ref.env = this.env;
         return ref;
     }

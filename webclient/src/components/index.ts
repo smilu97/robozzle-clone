@@ -9,8 +9,10 @@ import FucntionItem from './FunctionItem';
 import FunctionRow from './FunctionRow';
 import ActionSelector from './ActionSelector';
 import ColorSelector from './ColorSelector';
+import FunctionSelector from './FunctionSelector';
 
 (() => {
+    customElements.define('fn-selector', FunctionSelector);
     customElements.define('color-selector', ColorSelector);
     customElements.define('action-selector', ActionSelector);
     customElements.define('fn-control', FunctionControl);
