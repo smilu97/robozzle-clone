@@ -369,6 +369,9 @@ export default class Robozzle {
      * @param memory the sizes of functions
      */
     private _resetFunctions(memory: number[]) {
+        if (this.functions.length === memory.length)
+            return;
+            
         this.functions = [];
         let index = 1;
         for (const n of memory) {
